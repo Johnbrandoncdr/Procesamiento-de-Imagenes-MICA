@@ -30,11 +30,11 @@ def imagen_tablero_ajedrez(tamano=255, tamano_cuadro=20):
             img[i + tamano_cuadro:i + 2 * tamano_cuadro, j + tamano_cuadro:j + 2 * tamano_cuadro] = 255  # Bloque desplazado
     return img
 
-def imagen_escala_grises(tamano=255):
+def imagen_escala_grises(tamano=255, ancho_barras=10):
     """ Genera una imagen con una transición de negro a blanco en escala de grises """
     img = np.zeros((tamano, tamano), dtype=np.uint8)
-    for i in range(tamano):
-        img[:, i] = int((i / tamano) * 255)  # De negro (0) a blanco (255)
+    for i in range(0, tamano, ancho_barras):
+        img[:, i:i + ancho_barras] = int((i / tamano) * 255)  # De negro (0) a blanco (255)
     return img
 
 def imagen_circulo_central(tamano=255, radio=80):

@@ -1,0 +1,1 @@
+git remote set-url origin https://Johnbrandoncdr@github.com/Johnbrandoncdr/Procesamiento-de-Imagenes-MICA.git
