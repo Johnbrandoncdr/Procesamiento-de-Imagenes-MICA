@@ -43,6 +43,17 @@ for color, canal in canales_normalizados.items():
 imagen_normalizada = cv2.merge((canales_normalizados['azul'], canales_normalizados['verde'], canales_normalizados['rojo']))
 guardar_imagen(f"{nombre_imagen}_imagen_normalizada_tres_canales", imagen_normalizada, carpeta_salida)
 
+# Aplicar ecualización al histograma
+canales_ecualizados = {color: ecualizar_imagen(canal) for color, canal in canales.items()}
+
+# Guardar imágenes ecualizadas
+for color, canal in canales_ecualizados.items():
+    guardar_imagen(f"{nombre_imagen}_canal_{color}_ecualizado", canal, carpeta_salida)
+
+# Unir los canales ecualizados y guardar la imagen resultante
+imagen_ecualizada = cv2.merge((canales_ecualizados['azul'], canales_ecualizados['verde'], canales_ecualizados['rojo']))
+guardar_imagen(f"{nombre_imagen}_imagen_ecualizada_tres_canales", imagen_ecualizada, carpeta_salida)
+
 # Guardar histogramas de los canales originales
 for color, canal in canales.items():
     guardar_histograma(f"{nombre_imagen}_histograma_{color}", canal, color, carpeta_salida)
@@ -56,10 +67,9 @@ guardar_histograma(f"{nombre_imagen}_histograma_imagen_normalizada_tres_canales"
 
 # Mostrar la imagen resultante y los canales separados
 cv2.imshow(f'{nombre_imagen} - Imagen Normalizada', imagen_normalizada)
+cv2.imshow(f'{nombre_imagen} - Imagen Ecualizada', imagen_ecualizada)
 for color, canal in canales.items():
     cv2.imshow(f'{nombre_imagen} - Canal {color.capitalize()}', canal)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-#Normalizacion y ecualización

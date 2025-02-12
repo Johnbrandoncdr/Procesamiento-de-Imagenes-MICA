@@ -86,6 +86,10 @@ def normalizar_imagen(img, min_val=0, max_val=255):
     """Normaliza la imagen en un rango específico usando el min_val (0 por default) y max_val(255 por default)"""
     return cv2.normalize(img, None, min_val, max_val, cv2.NORM_MINMAX)
 
+def ecualizar_imagen(img):
+    """Aplica ecualización de histograma a una imagen en escala de grises"""
+    return cv2.equalizeHist(img) #cv2.equalizeHist() solo funciona en imágenes de un canal (escala de grises)
+
 def guardar_histograma(nombre, canal, color, carpeta_salida):
     """Calcula y guarda el histograma de un canal utilizando nombre, canal, color y carpeta_salida en ese orden"""
     # Mapear nombres en español a colores válidos en Matplotlib
