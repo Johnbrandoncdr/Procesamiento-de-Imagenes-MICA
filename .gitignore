@@ -137,3 +137,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# No subir imagenes generadas o importadas
+#imagenes/
+
+# No subir histogramas generados
+histogramas/
