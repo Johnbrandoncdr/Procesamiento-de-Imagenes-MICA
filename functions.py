@@ -90,6 +90,39 @@ def ecualizar_imagen(img):
     """Aplica ecualización de histograma a una imagen en escala de grises"""
     return cv2.equalizeHist(img) #cv2.equalizeHist() solo funciona en imágenes de un canal (escala de grises)
 
+def segmentar_histograma(nombre, canal, color, carpeta_salida):
+    """Segmenta un histograma en 8 partes y lo grafica en un histograma de barras."""
+    
+    # Mapear nombres en español a colores válidos en Matplotlib
+    color_map = {"azul": "blue", "verde": "green", "rojo": "red", "black": "black"}
+    
+    # Obtener color en inglés
+    color = color_map.get(color, "black")
+
+    # Calcular histograma
+    histograma = cv2.calcHist([canal], [0], None, [256], [0, 256]).flatten()
+
+    # Definir los 8 segmentos (cada uno cubre 32 valores de intensidad)
+    segmentos = [sum(histograma[i * 32:(i + 1) * 32]) for i in range(8)]
+
+    # Rango de valores para cada segmento
+    etiquetas = ["0-31", "32-63", "64-95", "96-127", "128-159", "160-191", "192-223", "224-255"]
+
+    # Graficar el histograma segmentado
+    plt.figure(figsize=(8, 6))
+    plt.bar(etiquetas, segmentos, color=color)
+    plt.title(f'Segmentación del Histograma - {nombre}')
+    plt.xlabel('Rangos de Intensidad')
+    plt.ylabel('Frecuencia de Píxeles')
+    plt.grid(axis='y')
+
+    # Guardar la imagen del histograma segmentado
+    ruta_segmento = os.path.join(carpeta_salida, f"{nombre}_segmentado.png")
+    plt.savefig(ruta_segmento)
+    plt.close()
+
+    return segmentos  # Retorna los valores de cada segmento
+
 def guardar_histograma(nombre, canal, color, carpeta_salida):
     """Calcula y guarda el histograma de un canal utilizando nombre, canal, color y carpeta_salida en ese orden"""
     # Mapear nombres en español a colores válidos en Matplotlib
@@ -104,3 +137,20 @@ def guardar_histograma(nombre, canal, color, carpeta_salida):
     plt.grid(True)
     plt.savefig(os.path.join(carpeta_salida, f"{nombre}.png"))
     plt.close()
+    
+def aplicar_segmentacion_imagen(img):
+    """Aplica la segmentación en 8 partes a la imagen y la devuelve con 8 niveles de intensidad."""
+
+    # Definir los 8 niveles de intensidad correspondientes a cada segmento
+    niveles_intensidad = [15, 45, 75, 105, 135, 165, 195, 225]  
+
+    # Crear una imagen vacía con el mismo tamaño
+    img_segmentada = np.zeros_like(img, dtype=np.uint8)
+
+    # Asignar cada pixel al segmento correspondiente
+    for i in range(8):
+        rango_min = i * 32  # Límite inferior del segmento
+        rango_max = (i + 1) * 32  # Límite superior del segmento
+        img_segmentada[(img >= rango_min) & (img < rango_max)] = niveles_intensidad[i]
+
+    return img_segmentada

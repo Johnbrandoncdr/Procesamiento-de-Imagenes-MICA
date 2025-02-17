@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from functions import *
 
 # Ruta de la imagen y carpeta de salida
-ruta_imagen = "Practica_2/imagenes/spine.tif"
+ruta_imagen = "Practica_2/imagenes/Lena.tif"
 carpeta_salida = "Practica_2/histogramas"
 
 # Extraer el nombre de la imagen sin extensión
@@ -62,14 +62,37 @@ for color, canal in canales.items():
 for color, canal in canales_normalizados.items():
     guardar_histograma(f"{nombre_imagen}_histograma_{color}_normalizado", canal, color, carpeta_salida)
 
-# Guardar histograma de la imagen final
-guardar_histograma(f"{nombre_imagen}_histograma_imagen_normalizada_tres_canales", imagen_normalizada, '', carpeta_salida)
+# Guardar histogramas de los canales ecualizados
+for color, canal in canales_ecualizados.items():
+    guardar_histograma(f"{nombre_imagen}_histograma_{color}_ecualizado", canal, color, carpeta_salida)
 
-# Mostrar la imagen resultante y los canales separados
+# Segmentar los histogramas en 8 partes
+for color, canal in canales.items():
+    segmentos = segmentar_histograma(f"{nombre_imagen}_segmento_{color}", canal, color, carpeta_salida)
+    print(f"Segmentos del histograma de {color}: {segmentos}")
+
+# Aplicar segmentación a la imagen en cada canal
+canales_segmentados = {color: aplicar_segmentacion_imagen(canal) for color, canal in canales.items()}
+
+# Guardar imágenes segmentadas
+for color, canal in canales_segmentados.items():
+    guardar_imagen(f"{nombre_imagen}_canal_{color}_segmentado", canal, carpeta_salida)
+
+# Unir los canales segmentados y guardar la imagen resultante
+imagen_segmentada = cv2.merge((canales_segmentados['azul'], canales_segmentados['verde'], canales_segmentados['rojo']))
+guardar_imagen(f"{nombre_imagen}_imagen_segmentada", imagen_segmentada, carpeta_salida)
+
+# Guardar histograma de la imagen final segmentada
+guardar_histograma(f"{nombre_imagen}_histograma_imagen_segmentada", imagen_segmentada, 'black', carpeta_salida)
+
+# Mostrar imágenes resultantes
 cv2.imshow(f'{nombre_imagen} - Imagen Normalizada', imagen_normalizada)
 cv2.imshow(f'{nombre_imagen} - Imagen Ecualizada', imagen_ecualizada)
+cv2.imshow(f'{nombre_imagen} - Imagen Segmentada', imagen_segmentada)
+
 for color, canal in canales.items():
     cv2.imshow(f'{nombre_imagen} - Canal {color.capitalize()}', canal)
+    cv2.imshow(f'{nombre_imagen} - Canal {color.capitalize()} Segmentado', canales_segmentados[color])
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
