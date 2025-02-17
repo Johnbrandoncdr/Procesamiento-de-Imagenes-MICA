@@ -76,20 +76,22 @@ def ecualizar_imagen(img):
     """Aplica ecualización de histograma a una imagen en escala de grises."""
     return cv2.equalizeHist(img)
 
-def segmentar_histograma(nombre, canal, color, carpeta_salida, subcarpeta="segmentada"):
-    """Segmenta un histograma en 8 partes y lo grafica en un histograma de barras."""
+def segmentar_histograma(nombre, imagen, carpeta_salida, subcarpeta="segmentada"):
+    """Segmenta el histograma de una imagen completa o de un canal en 8 partes y lo guarda."""
+
     ruta_completa = os.path.join(carpeta_salida, subcarpeta)
     crear_carpeta(ruta_completa)
 
-    color_map = {"azul": "blue", "verde": "green", "rojo": "red", "black": "black"}
-    color = color_map.get(color, "black")
+    histograma = cv2.calcHist([imagen], [0], None, [256], [0, 256]).flatten()
 
-    histograma = cv2.calcHist([canal], [0], None, [256], [0, 256]).flatten()
+    # Dividir el histograma en 8 segmentos de 32 valores cada uno
     segmentos = [sum(histograma[i * 32:(i + 1) * 32]) for i in range(8)]
+
     etiquetas = ["0-31", "32-63", "64-95", "96-127", "128-159", "160-191", "192-223", "224-255"]
 
+    # Graficar el histograma segmentado
     plt.figure(figsize=(8, 6))
-    plt.bar(etiquetas, segmentos, color=color)
+    plt.bar(etiquetas, segmentos, color="gray")  # Color gris para la imagen original
     plt.title(f'Segmentación del Histograma - {nombre}')
     plt.xlabel('Rangos de Intensidad')
     plt.ylabel('Frecuencia de Píxeles')
@@ -100,6 +102,7 @@ def segmentar_histograma(nombre, canal, color, carpeta_salida, subcarpeta="segme
     plt.close()
 
     return segmentos
+
 
 def aplicar_segmentacion_imagen(img, carpeta_salida, nombre_imagen):
     """Genera 8 imágenes segmentadas, cada una mostrando un rango específico de intensidad."""
