@@ -17,18 +17,18 @@ nombre_imagen = os.path.splitext(os.path.basename(ruta_imagen))[0]
 # Crear carpeta de salida si no existe
 crear_carpeta(carpeta_salida)
 
-# Cargar la imagen en escala de grises (para segmentación global)
-imagen = cv2.imread(ruta_imagen, cv2.IMREAD_GRAYSCALE)
+# Cargar la imagen en color
+imagen_color = cv2.imread(ruta_imagen)
 
-if imagen is None:
+if imagen_color is None:
     print("No se pudo cargar la imagen. Verifica la ruta.")
     exit()
 
-# Cargar la imagen en color para procesamiento de canales
-imagen_color = cv2.imread(ruta_imagen)  
-canales = {'azul': imagen_color[:, :, 0], 'verde': imagen_color[:, :, 1], 'rojo': imagen_color[:, :, 2]}
+# **Tomar solo el canal verde para convertirlo a escala de grises**
+imagen_gris = imagen_color[:, :, 1]
 
 # **Procesamiento Normalizado**
+canales = {'azul': imagen_color[:, :, 0], 'verde': imagen_color[:, :, 1], 'rojo': imagen_color[:, :, 2]}
 canales_normalizados = {color: normalizar_imagen(canal) for color, canal in canales.items()}
 for color, canal in canales_normalizados.items():
     guardar_imagen(f"{nombre_imagen}_canal_{color}_normalizado", canal, carpeta_salida, "normalizada")
@@ -42,16 +42,10 @@ for color, canal in canales_ecualizados.items():
 imagen_ecualizada = cv2.merge(tuple(canales_ecualizados.values()))
 guardar_imagen(f"{nombre_imagen}_imagen_ecualizada", imagen_ecualizada, carpeta_salida, "ecualizada")
 
-# **Procesamiento Segmentado**
-# Segmentación de los canales individuales
-for color, canal in canales.items():
-    aplicar_segmentacion_imagen(canal, carpeta_salida, f"{nombre_imagen}_canal_{color}")
-
-# **Segmentación de la imagen original**
-aplicar_segmentacion_imagen(imagen, carpeta_salida, f"{nombre_imagen}_original")
-
-# **Segmentación del histograma de la imagen original**
-segmentar_histograma(f"{nombre_imagen}_original", imagen, carpeta_salida, "segmentada")
+# **Segmentación (Cuantización)**
+imagen_segmentada_4 = segmentar_imagen(imagen_gris, 4, carpeta_salida, nombre_imagen)
+imagen_segmentada_8 = segmentar_imagen(imagen_gris, 8, carpeta_salida, nombre_imagen)
+imagen_segmentada_16 = segmentar_imagen(imagen_gris, 16, carpeta_salida, nombre_imagen)
 
 # **Guardar Histogramas**
 for color, canal in canales.items():
@@ -60,12 +54,15 @@ for color, canal in canales_ecualizados.items():
     guardar_histograma(f"{nombre_imagen}_histograma_{color}_ecualizado", canal, color, carpeta_salida, "ecualizada")
 
 # **Guardar histograma segmentado de la imagen original**
-guardar_histograma(f"{nombre_imagen}_histograma_original", imagen, "gray", carpeta_salida, "segmentada")
+guardar_histograma(f"{nombre_imagen}_histograma_original", imagen_gris, "gray", carpeta_salida, "segmentada")
 
 # **Mostrar imágenes**
 cv2.imshow('Imagen Normalizada', imagen_normalizada)
 cv2.imshow('Imagen Ecualizada', imagen_ecualizada)
-cv2.imshow('Imagen Original', imagen)
+cv2.imshow('Imagen Original', imagen_gris)
+cv2.imshow('Imagen Segmentada - 4 Niveles', imagen_segmentada_4)
+cv2.imshow('Imagen Segmentada - 8 Niveles', imagen_segmentada_8)
+cv2.imshow('Imagen Segmentada - 16 Niveles', imagen_segmentada_16)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
