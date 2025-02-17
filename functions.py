@@ -103,10 +103,12 @@ def segmentar_histograma(nombre, imagen, carpeta_salida, subcarpeta="segmentada"
 
     return segmentos
 
-
-def aplicar_segmentacion_imagen(img, carpeta_salida, nombre_imagen):
+def aplicar_segmentacion_imagen(img, carpeta_salida, nombre_imagen, subcarpeta="segmentada"):
     """Genera 8 imágenes segmentadas, cada una mostrando un rango específico de intensidad."""
     
+    ruta_completa = os.path.join(carpeta_salida, subcarpeta)
+    crear_carpeta(ruta_completa)
+
     niveles_intensidad = [15, 45, 75, 105, 135, 165, 195, 225]  # Intensidad representativa de cada segmento
     imagenes_segmentadas = []  # Lista para almacenar las imágenes generadas
 
@@ -119,10 +121,9 @@ def aplicar_segmentacion_imagen(img, carpeta_salida, nombre_imagen):
         img_segmentada[(img >= rango_min) & (img < rango_max)] = niveles_intensidad[i]
 
         # Guardar la imagen segmentada
-        guardar_imagen(f"{nombre_imagen}_segmento_{rango_min}-{rango_max}", img_segmentada, carpeta_salida, "segmentada")
+        guardar_imagen(f"{nombre_imagen}_segmento_{rango_min}-{rango_max}", img_segmentada, carpeta_salida, subcarpeta)
 
         # Agregar a la lista
         imagenes_segmentadas.append(img_segmentada)
 
     return imagenes_segmentadas
-

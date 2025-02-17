@@ -17,15 +17,15 @@ nombre_imagen = os.path.splitext(os.path.basename(ruta_imagen))[0]
 # Crear carpeta de salida si no existe
 crear_carpeta(carpeta_salida)
 
-# Cargar la imagen en color
-imagen = cv2.imread(ruta_imagen, cv2.IMREAD_GRAYSCALE)  # Cargar en escala de grises para segmentación global
+# Cargar la imagen en escala de grises (para segmentación global)
+imagen = cv2.imread(ruta_imagen, cv2.IMREAD_GRAYSCALE)
 
 if imagen is None:
     print("No se pudo cargar la imagen. Verifica la ruta.")
     exit()
 
-# Separar los canales de color
-imagen_color = cv2.imread(ruta_imagen)  # Imagen en color
+# Cargar la imagen en color para procesamiento de canales
+imagen_color = cv2.imread(ruta_imagen)  
 canales = {'azul': imagen_color[:, :, 0], 'verde': imagen_color[:, :, 1], 'rojo': imagen_color[:, :, 2]}
 
 # **Procesamiento Normalizado**
@@ -43,8 +43,12 @@ imagen_ecualizada = cv2.merge(tuple(canales_ecualizados.values()))
 guardar_imagen(f"{nombre_imagen}_imagen_ecualizada", imagen_ecualizada, carpeta_salida, "ecualizada")
 
 # **Procesamiento Segmentado**
+# Segmentación de los canales individuales
 for color, canal in canales.items():
     aplicar_segmentacion_imagen(canal, carpeta_salida, f"{nombre_imagen}_canal_{color}")
+
+# **Segmentación de la imagen original**
+aplicar_segmentacion_imagen(imagen, carpeta_salida, f"{nombre_imagen}_original")
 
 # **Segmentación del histograma de la imagen original**
 segmentar_histograma(f"{nombre_imagen}_original", imagen, carpeta_salida, "segmentada")
@@ -56,12 +60,12 @@ for color, canal in canales_ecualizados.items():
     guardar_histograma(f"{nombre_imagen}_histograma_{color}_ecualizado", canal, color, carpeta_salida, "ecualizada")
 
 # **Guardar histograma segmentado de la imagen original**
-guardar_histograma(f"{nombre_imagen}_histograma_original_BW", imagen, "gray", carpeta_salida, "segmentada")
+guardar_histograma(f"{nombre_imagen}_histograma_original", imagen, "gray", carpeta_salida, "segmentada")
 
 # **Mostrar imágenes**
 cv2.imshow('Imagen Normalizada', imagen_normalizada)
 cv2.imshow('Imagen Ecualizada', imagen_ecualizada)
-cv2.imshow('Imagen Original BW', imagen)
+cv2.imshow('Imagen Original', imagen)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
