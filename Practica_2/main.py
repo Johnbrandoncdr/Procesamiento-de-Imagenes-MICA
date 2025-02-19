@@ -42,7 +42,7 @@ for color, canal in canales_ecualizados.items():
 imagen_ecualizada = cv2.merge(tuple(canales_ecualizados.values()))
 guardar_imagen(f"{nombre_imagen}_imagen_ecualizada", imagen_ecualizada, carpeta_salida, "ecualizada")
 
-# **Segmentación (Cuantización)**
+# **Segmentación**
 imagen_segmentada_4 = segmentar_imagen(imagen_gris, 4, carpeta_salida, nombre_imagen)
 imagen_segmentada_8 = segmentar_imagen(imagen_gris, 8, carpeta_salida, nombre_imagen)
 imagen_segmentada_16 = segmentar_imagen(imagen_gris, 16, carpeta_salida, nombre_imagen)
