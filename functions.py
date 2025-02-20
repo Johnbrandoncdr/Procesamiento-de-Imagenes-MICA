@@ -59,7 +59,7 @@ def segmentar_imagen(img, niveles, carpeta_salida, nombre_imagen):
     # Determinar el factor de cuantización
     factor = 256 // niveles
 
-    # Aplicar la cuantización (segmentación)
+    # Aplicar la segmentación
     img_segmentada = (img // factor) * factor
 
     # Guardar la imagen segmentada
