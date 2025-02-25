@@ -1,4 +1,3 @@
 git remote set-url origin https://Johnbrandoncdr@github.com/Johnbrandoncdr/Procesamiento-de-Imagenes-MICA.git
 
 #175 188 y 183  filtros espaciales o mascaras  a partir de convolucion aplicar a todas las imagenes (escala de grises) Practica 3
-#sig clase correlacion
