@@ -139,6 +139,7 @@ dmypy.json
 .pyre/
 
 # No subir imagenes generadas o importadas
-#imagenes/
+Practica_5/imagenes/
+Practica_5/resultados/
 
 # No subir histogramas generados

@@ -66,3 +66,73 @@ def segmentar_imagen(img, niveles, carpeta_salida, nombre_imagen):
     guardar_imagen(f"{nombre_imagen}_segmentada_{niveles}_niveles", img_segmentada, carpeta_salida, "segmentada")
 
     return img_segmentada
+
+### FUNCIONES DE TRANSFORMADA DE FOURIER ###
+def fourier_transform(image):
+    """Aplica la Transformada de Fourier y centra el espectro."""
+    f = np.fft.fft2(image)
+    fshift = np.fft.fftshift(f)
+    return f, fshift
+
+def inverse_fourier_transform(fshift):
+    """Aplica la Transformada Inversa de Fourier."""
+    f_ishift = np.fft.ifftshift(fshift)
+    img_back = np.fft.ifft2(f_ishift)
+    return np.abs(img_back)
+
+### FILTROS EN EL DOMINIO DE LA FRECUENCIA ###
+def low_pass_filter(shape, D0):
+    """Genera un filtro pasa bajas ideal."""
+    M, N = shape
+    H = np.zeros((M, N), dtype=np.float32)
+    center = (M // 2, N // 2)
+
+    for u in range(M):
+        for v in range(N):
+            D = np.sqrt((u - center[0])**2 + (v - center[1])**2)
+            if D <= D0:
+                H[u, v] = 1
+    return H
+
+def high_pass_filter(shape, D0):
+    """Genera un filtro pasa altas ideal."""
+    return 1 - low_pass_filter(shape, D0)
+
+def band_pass_filter(shape, D0, W):
+    """Genera un filtro pasa bandas ideal."""
+    return low_pass_filter(shape, D0 + W // 2) - low_pass_filter(shape, D0 - W // 2)
+
+def band_reject_filter(shape, D0, W):
+    """Genera un filtro rechazo de banda ideal."""
+    return 1 - band_pass_filter(shape, D0, W)
+
+def butterworth_filter(shape, D0, n, type="low"):
+    """Genera un filtro Butterworth (pasa bajas o pasa altas)."""
+    M, N = shape
+    H = np.zeros((M, N), dtype=np.float32)
+    center = (M // 2, N // 2)
+
+    for u in range(M):
+        for v in range(N):
+            D = np.sqrt((u - center[0])**2 + (v - center[1])**2)
+            if type == "low":
+                H[u, v] = 1 / (1 + (D / D0) ** (2 * n))
+            elif type == "high":
+                H[u, v] = 1 - 1 / (1 + (D / D0) ** (2 * n))
+    
+    return H
+
+def gaussian_filter(shape, D0, type="low"):
+    """Genera un filtro Gaussiano (pasa bajas o pasa altas)."""
+    M, N = shape
+    H = np.zeros((M, N), dtype=np.float32)
+    center = (M // 2, N // 2)
+
+    for u in range(M):
+        for v in range(N):
+            D = np.sqrt((u - center[0])**2 + (v - center[1])**2)
+            H[u, v] = np.exp(-(D**2) / (2 * (D0**2)))
+    
+    if type == "high":
+        return 1 - H
+    return H

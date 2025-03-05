@@ -1,13 +1,5 @@
 git remote set-url origin https://Johnbrandoncdr@github.com/Johnbrandoncdr/Procesamiento-de-Imagenes-MICA.git
 
-Practica 4 Mirar nuts_f con coorelacion con nuts_g , encontrar los puntos brillantes y en ese punto brillante aplicar un circulo rojo en el punto brillante 
-w = una de las Imagenes y f = otra de las imagenes y se van a acomparar
-
-Reporte 3, investigacion de que es y como funciona la coorelacion
-
-Se llama coocordancia de plantillas
-
------
 Practica 5  de filtros clase 16 
 Filtros suavizantes 
 Usar Transformada en la imagen y multiplicarla por el filtro
