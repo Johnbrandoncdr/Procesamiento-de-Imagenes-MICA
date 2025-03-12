@@ -14,10 +14,9 @@ image_folder = "Practica_5/imagenes"
 output_folder = "Practica_5/resultados"
 crear_carpeta(output_folder)
 
-D_VALUES = [30, 60, 90, 120]
+D_VALUES = [15, 30, 60, 120]
 
-image_files = ["aerial.tif", "einstein.tif", "kidney.tif", "Lena.tif", "pet.tif", 
-               "polen.tif", "spine.tif", "test02.tif", "test09.tif", "test12.tif"]
+image_files = ["Lena.tif", "polen.tif", "spine.tif"]
 
 def load_tiff_image(image_path):
     img = Image.open(image_path).convert('L')
