@@ -45,7 +45,7 @@ guardar_imagen("imagen_6_colores_a", a_norm, output_folder, subcarpeta="colores"
 guardar_imagen("imagen_6_colores_b", b_norm, output_folder, subcarpeta="colores")
 
 # =============================================================================
-# PARTE 2: PROCESAMIENTO DE ESCENA NATURAL
+# PARTE 2: PROCESAMIENTO
 # =============================================================================
 for name in image_names:
     print(f"Procesando imagen: {name}")
@@ -65,17 +65,17 @@ for name in image_names:
     b_norm = normalizar_imagen(b)
 
     # Guardar imágenes L, a, b
-    guardar_imagen(f"{name}_L", L_norm, output_folder, subcarpeta="escena")
-    guardar_imagen(f"{name}_a", a_norm, output_folder, subcarpeta="escena")
-    guardar_imagen(f"{name}_b", b_norm, output_folder, subcarpeta="escena")
+    guardar_imagen(f"{name}_L", L_norm, output_folder, subcarpeta="procesadas")
+    guardar_imagen(f"{name}_a", a_norm, output_folder, subcarpeta="procesadas")
+    guardar_imagen(f"{name}_b", b_norm, output_folder, subcarpeta="procesadas")
 
     # Umbralización multinivel en cada componente
     L_umb = umbralizar_multinivel(L_norm, 5)
     a_umb = umbralizar_multinivel(a_norm, 5)
     b_umb = umbralizar_multinivel(b_norm, 5)
 
-    guardar_imagen(f"{name}_L_umbral", L_umb, output_folder, subcarpeta="escena")
-    guardar_imagen(f"{name}_a_umbral", a_umb, output_folder, subcarpeta="escena")
-    guardar_imagen(f"{name}_b_umbral", b_umb, output_folder, subcarpeta="escena")
+    guardar_imagen(f"{name}_L_umbral", L_umb, output_folder, subcarpeta="procesadas")
+    guardar_imagen(f"{name}_a_umbral", a_umb, output_folder, subcarpeta="procesadas")
+    guardar_imagen(f"{name}_b_umbral", b_umb, output_folder, subcarpeta="procesadas")
 
 print("Práctica 7 completada.")

@@ -1,9 +1,4 @@
 git remote set-url origin https://Johnbrandoncdr@github.com/Johnbrandoncdr/Procesamiento-de-Imagenes-MICA.git
 
-Practica 5  de filtros clase 16 
-Filtros suavizantes 
-Usar Transformada en la imagen y multiplicarla por el filtro
-Usar 4 diametros  a nuestra consideracion
-leer la imagen para saber sus pixeles y asi ya hacer el filtro respectivo
-pasa bajas y pasa altas y pasa bandas y el inverso de pasa bandas para el ideal buteralgo y gasueano
-Reporte 4
+Procesos estocasticos
+Transformaciones Logaritmicas
