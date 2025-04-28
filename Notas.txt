@@ -2,3 +2,12 @@ git remote set-url origin https://Johnbrandoncdr@github.com/Johnbrandoncdr/Proce
 
 Procesos estocasticos
 Transformaciones Logaritmicas
+
+Practica 7.- Espacios de color
+
+Hacer una imagen para separar los colores en rgb para pasarlo a cielab y de hsv 
+y mirarlo que es lo que me muestra 
+
+(y de ahi compararlas con las imagenes para identificar los colores de mi imagen)
+
+Escaneo con drones en la separacion e identificacion 
