@@ -8,74 +8,71 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from functions import *
 
 # =============================================================================
-# CONFIGURACIÓN INICIAL
+# CONFIGURACIÓN
 # =============================================================================
 input_folder = "Practica_7/imagenes"
 output_folder = "Practica_7/resultados"
 crear_carpeta(output_folder)
 
-image_names = ["garden_color.tiff", "Lena.tif", "test02.tif", "test09.tif", "test12.tif"]
-colores_lab = [
-    (0,   0,   0),     # Negro
-    (100, 0,   0),     # Blanco
-    (53,  80,  67),    # Rojo
-    (87, -86, 83),     # Verde
-    (32, 79, -108),    # Azul
-    (97, -21, 94),     # Amarillo
-]
+# Lista de imágenes
+image_names = ["garden_color.tiff", "Lena.tif", "test02.tif", "test09.tif", "test12.tif", "RGB_Image.png"]
 
 # =============================================================================
-# PARTE 1: CREACIÓN DE IMAGEN DE 6 COLORES Y CÁLCULO DE CIELAB
+# FUNCIÓN PARA PROCESAR UNA IMAGEN
 # =============================================================================
-print("Procesando imagen con 6 colores...")
+def procesar_espacios_color(nombre_imagen, img_rgb, output_folder):
+    """Procesa la imagen en RGB, HSV y CIELAB, separa canales y guarda resultados."""
 
-img_colores = crear_imagen_seis_colores(colores_lab, shape=(100, 600))
-guardar_imagen("imagen_6_colores_rgb", img_colores, output_folder, subcarpeta="colores")
+    # ----- RGB -----
+    B, G, R = cv2.split(cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR))  # OpenCV trabaja en BGR
+    rgb_merge = cv2.merge((B, G, R))
 
-# Convertir a CIELAB (manual)
-L, a, b = calcular_lab_manual(img_colores)
+    # Guardar canales RGB
+    guardar_imagen(f"{nombre_imagen}_canal_R", R, output_folder, subcarpeta="RGB")
+    guardar_imagen(f"{nombre_imagen}_canal_G", G, output_folder, subcarpeta="RGB")
+    guardar_imagen(f"{nombre_imagen}_canal_B", B, output_folder, subcarpeta="RGB")
+    guardar_imagen(f"{nombre_imagen}_imagen_RGB", rgb_merge, output_folder, subcarpeta="RGB")
 
-# Normalizar a 0–255 y guardar
-L_norm = normalizar_imagen(L)
-a_norm = normalizar_imagen(a)
-b_norm = normalizar_imagen(b)
+    # ----- HSV -----
+    img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
+    H, S, V = cv2.split(img_hsv)
 
-guardar_imagen("imagen_6_colores_L", L_norm, output_folder, subcarpeta="colores")
-guardar_imagen("imagen_6_colores_a", a_norm, output_folder, subcarpeta="colores")
-guardar_imagen("imagen_6_colores_b", b_norm, output_folder, subcarpeta="colores")
+    # Guardar canales HSV
+    guardar_imagen(f"{nombre_imagen}_canal_H", H, output_folder, subcarpeta="HSV")
+    guardar_imagen(f"{nombre_imagen}_canal_S", S, output_folder, subcarpeta="HSV")
+    guardar_imagen(f"{nombre_imagen}_canal_V", V, output_folder, subcarpeta="HSV")
+    guardar_imagen(f"{nombre_imagen}_imagen_HSV", img_hsv, output_folder, subcarpeta="HSV")
 
-# =============================================================================
-# PARTE 2: PROCESAMIENTO
-# =============================================================================
-for name in image_names:
-    print(f"Procesando imagen: {name}")
-    img_path = os.path.join(input_folder, name)
-    img_color = cv2.imread(img_path)
-    if img_color is None:
-        print(f"No se pudo leer {name}")
-        continue
-
-    # Convertir a CIELAB
-    lab = convertir_rgb_a_cielab_manual(img_color)
+    # ----- CIELAB -----
+    lab = convertir_rgb_a_cielab_manual(img_rgb)
     L, a, b = lab[..., 0], lab[..., 1], lab[..., 2]
 
-    # Normalizar a 0–255
+    # Normalizar LAB para verlos
     L_norm = normalizar_imagen(L)
     a_norm = normalizar_imagen(a)
     b_norm = normalizar_imagen(b)
 
-    # Guardar imágenes L, a, b
-    guardar_imagen(f"{name}_L", L_norm, output_folder, subcarpeta="procesadas")
-    guardar_imagen(f"{name}_a", a_norm, output_folder, subcarpeta="procesadas")
-    guardar_imagen(f"{name}_b", b_norm, output_folder, subcarpeta="procesadas")
+    # Guardar canales LAB
+    guardar_imagen(f"{nombre_imagen}_componente_L", L_norm, output_folder, subcarpeta="CIELAB")
+    guardar_imagen(f"{nombre_imagen}_componente_a", a_norm, output_folder, subcarpeta="CIELAB")
+    guardar_imagen(f"{nombre_imagen}_componente_b", b_norm, output_folder, subcarpeta="CIELAB")
 
-    # Umbralización multinivel en cada componente
-    L_umb = umbralizar_multinivel(L_norm, 5)
-    a_umb = umbralizar_multinivel(a_norm, 5)
-    b_umb = umbralizar_multinivel(b_norm, 5)
+# =============================================================================
+# PROCESAR TODAS LAS IMÁGENES
+# =============================================================================
+for name in image_names:
+    if name == "RGB_Image.png":
+        img_path = "Practica_7/imagenes/RGB_Image.png" 
+    else:
+        img_path = os.path.join(input_folder, name)
 
-    guardar_imagen(f"{name}_L_umbral", L_umb, output_folder, subcarpeta="procesadas")
-    guardar_imagen(f"{name}_a_umbral", a_umb, output_folder, subcarpeta="procesadas")
-    guardar_imagen(f"{name}_b_umbral", b_umb, output_folder, subcarpeta="procesadas")
+    print(f"Procesando {name}...")
+    img_color = cv2.imread(img_path)
+    if img_color is None:
+        print(f"No se pudo leer {name}")
+        continue
+    img_rgb = cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB)  # Convertir a RGB real
 
-print("Práctica 7 completada.")
+    procesar_espacios_color(os.path.splitext(name)[0], img_rgb, output_folder)
+
+print("¡Todas las imágenes fueron procesadas en RGB, HSV y CIELAB!")

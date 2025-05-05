@@ -10,4 +10,4 @@ y mirarlo que es lo que me muestra
 
 (y de ahi compararlas con las imagenes para identificar los colores de mi imagen)
 
-Escaneo con drones en la separacion e identificacion 
+Escaneo con drones en la separacion e identificacion
